@@ -1,0 +1,62 @@
+# depslib dependency file v1.0
+1623786700 source:c:\users\home\onedrive\documentos\facultad programacion\cursada\programacion y laboratorio i\tp final\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"libreriaAstronauta.h"
+	"LibreriaNaves.h"
+
+1623786481 source:c:\users\home\onedrive\documentos\facultad programacion\cursada\programacion y laboratorio i\tp final\libreriaastronauta.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"libreriaAstronauta.h"
+
+1623771326 c:\users\home\onedrive\documentos\facultad programacion\cursada\programacion y laboratorio i\tp final\libreriaastronauta.h
+
+1623786442 c:\users\home\onedrive\documentos\facultad programacion\cursada\programacion y laboratorio i\tp final\librerianaves.h
+
+1623786454 source:c:\users\home\onedrive\documentos\facultad programacion\cursada\programacion y laboratorio i\tp final\librerianaves.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"LibreriaNaves.h"
+
+1623772920 source:c:\users\lenovo\onedrive\escritorio\tp-final-main\libreriaastronauta.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"libreriaAstronauta.h"
+	"libreriaMisiones.h"
+
+1623928788 c:\users\lenovo\onedrive\escritorio\tp-final-main\libreriaastronauta.h
+
+1623928723 c:\users\lenovo\onedrive\escritorio\tp-final-main\libreriamisiones.h
+
+1623772920 source:c:\users\lenovo\onedrive\escritorio\tp-final-main\libreriamisiones.c
+	<stdio.h>
+	<stdlib.h>
+	"LibreriaNaves.h"
+
+1623929080 c:\users\lenovo\onedrive\escritorio\tp-final-main\librerianaves.h
+
+1623772920 source:c:\users\lenovo\onedrive\escritorio\tp-final-main\librerianaves.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"LibreriaNaves.h"
+
+1623951728 source:c:\users\lenovo\onedrive\escritorio\tp-final-main\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1623936453 source:c:\users\lenovo\onedrive\escritorio\tp-final-main\libreriaastronautas.c
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	"libreriaAstronautas.h"
+
+1623936453 c:\users\lenovo\onedrive\escritorio\tp-final-main\libreriaastronautas.h
+	<stdlib.h>
+
