@@ -14,7 +14,7 @@ typedef struct
     char nacionalidad[30];
     char especialidad[30];//
     int horasAcumuladas;
-    int misiones[30];
+    int mision[30];
     int horasEEI;
     int estado;//1-activo/2-inactivo
 } stAstronauta;
@@ -37,18 +37,26 @@ typedef struct
     char detalleMision[50];
 } misiones;
 ///MISIONES
-void nuevaMision();
-misiones cargarIdMision(misiones aux);
+void crearMision();
+misiones registroMisiones(int id);
+int crearIdMisiones(misiones a);
+void nuevaMision(misiones aux);
 misiones asignarNave(misiones aux);
 misiones cargarEstadoMision(misiones aux);
 misiones cargarDestinoyCargamento(misiones aux);
 misiones asignarAstronauta(misiones aux);
 void mostrarMisiones();
 void mostrarUnaMision(misiones aux);
+void consultasMision();
+void darAltaMision();
+void darBajaMision ();
+void modificacionMision();
 void menuMisiones();
 ///NAVES
-nave cargarId (nave A);
-void cargarNave ();
+void crearNave();
+nave registroN(int id);
+int crearIdNave(nave a);
+void cargarNave (nave aux);
 nave cargarTipo (nave B);
 nave cantidadVuelos (nave C);
 nave horasVuelo (nave D);
@@ -63,6 +71,7 @@ void consultaId ();
 void menuNaves();
 ///ASTRONAUTAS
 void cargarAstronautas();
+void crearrAstronauta();
 stAstronauta cargarIndividual(stAstronauta astronauta);
 stAstronauta cargarNombre(stAstronauta astronauta);
 stAstronauta cargarEdad(stAstronauta astronauta);
@@ -77,7 +86,9 @@ void darBaja(int identificacion);
 void unAstronauta();
 void modificarUnAstronauta();
 void menuAstronauta();
-
+int crearId(stAstronauta astronauta);
+stAstronauta registro(int id);
+void crearAstronauta();
 int main()
 {
     int numero;
@@ -96,7 +107,6 @@ int main()
         case 1:
             menuAstronauta();
             break;
-
         case 2:
             menuNaves();
             break;
@@ -132,7 +142,7 @@ void menuAstronauta()
         switch(opcion)
         {
         case 1://carga de astronautas
-            cargarAstronautas();
+            crearAstronauta();
             break;
         case 2://mostrar listado de astronautas y datos
             mostrarAstronautas();
@@ -162,71 +172,72 @@ void menuAstronauta()
         scanf("%c", &control);
     }
 }
-void cargarAstronautas()///carga de astronautas mientras el usuario desee
+void crearAstronauta()
+{
+    char control='s';
+    int id;
+    stAstronauta a;
+    while(control=='s')
+    {
+        id=crearId(a);
+        printf("\nID: %i\n", id);
+        a=registro(id);
+        cargarAstronautas(a);
+
+        printf("\nSi desea cargar otro astronauta presione 's': ");
+        fflush(stdin);
+        scanf("%c", &control);
+    }
+}
+stAstronauta registro(int id)
+{
+    stAstronauta a;
+    a.id=id;
+    a = cargarNombre(a);
+    a = cargarEdad(a);
+    a = cargarNacionalidad(a);
+    a = cargarEspecialidad(a);
+    a = cargarHoras(a);
+    a = cargarEstado(a);
+    return a;
+}
+int crearId(stAstronauta astronauta)
+{
+    FILE*arch=fopen(archAstronauta,"r+b");
+    int id=0;
+    if(arch!=NULL)
+    {
+        fseek(arch,sizeof(stAstronauta)*(-1),SEEK_END);
+        fread(&astronauta,sizeof(stAstronauta),1,arch);
+        id=astronauta.id;
+        id++;
+        fclose(arch);
+    }
+    return id;
+}
+void cargarAstronautas(stAstronauta astronauta)///carga de astronautas mientras el usuario desee
 {
     FILE*arch=fopen(archAstronauta,"rb");//Se abre en "rb" para comprobar la existencia del archivo
-    stAstronauta astronauta;
-    char control='s';
 
     if(arch==NULL)//el archivo no tiene datos
     {
-        printf("Se ingresaran datos por primera vez\n");
+        printf("Se ingresaron datos por primera vez\n");
         arch=fopen(archAstronauta,"wb");
     }
     else//el archivo tiene datos
     {
         fclose(arch);
-        printf("\nSe agregaran datos al archNaves");
+        printf("\nSe agregaron datos al archivo");
         arch=fopen(archAstronauta,"ab");
     }
 
     if(arch!=NULL)//se pudo abrir el archNaves en escritura
     {
-        while(control=='s')
-        {
-            astronauta = cargarIndividual(astronauta);
-            astronauta = cargarNombre(astronauta);
-            astronauta = cargarEdad(astronauta);
-            astronauta = cargarNacionalidad(astronauta);
-            astronauta = cargarEspecialidad(astronauta);
-            astronauta = cargarHoras(astronauta);
-            astronauta = cargarEstado(astronauta);
             fwrite(&astronauta,sizeof(stAstronauta),1,arch);
-
-            printf("\nSi desea cargar otro astronauta presione 's': ");
-            fflush(stdin);
-            scanf("%c", &control);
-        }
         fclose(arch);
     }
     else//el arch no se pudo abrir en escritura
         printf("\n\t\t---Hubo un ERROR al abrir el archivo---\n");
-}
-stAstronauta cargarIndividual(stAstronauta astronauta)///carga del ID
-{
-    FILE*arch=fopen(archAstronauta,"rb");//modo lectura
-    stAstronauta aux = astronauta;
-
-    if(arch!=NULL)//se pudo abrir el archivo (hay datos)
-    {
-        //verificacion de id (ARREGLAR)
-        printf("\nIngrese el ID: ");
-        scanf("%i", &aux.id);
-        while(fread(&astronauta,sizeof(stAstronauta),1,arch)>0)//lee el archivo
-        {
-            if(aux.id==astronauta.id)//si el id ya existe no es valido y se pide nuevamente
-            {
-                printf("\nID NO VALIDO\n");
-                printf("\nIngrese el ID: ");
-                scanf("%i", &aux.id);
-            }
-        }
-        astronauta.id=aux.id;
-        fclose(arch);
-    }
-    else//no se pudo abrir el archivo
-        printf("\n\t\t---Hubo un ERROR al abrir el archivo---");
-    return astronauta;
 }
 stAstronauta cargarNombre(stAstronauta astronauta)///carga el nombre, apellido y apodo
 {
@@ -289,18 +300,23 @@ stAstronauta cargarEstado(stAstronauta astronauta)///carga estado
     }
     return astronauta;
 }
-/*void cargarMisiones(int id)
+/*void cargarMisiones(int idMision, int idAstro)
 {
-    FILE*arch=fopen(archMisiones,"r+b");
-    misiones a;;
-    int flag=0;
+    FILE*archi=fopen(archAstronauta,"r+b");
+    FILE*arch=fopen(archMisiones,"rb");
+    stAstronauta a;
+    misiones b;
     if(arch!=NULL)
     {
-        while(flag==0 && fread(&a,sizeof(misiones),1,arch)>0)
+        while(fread(&b,sizeof(misiones)))
+    }
+    if(archi!=NULL)
+    {
+        while(fread(&a,sizeof(stAstronauta),1,archi)>0)
         {
-            if(id==a.idAstronauta)
+            if(a.id==idAstro)
             {
-                a.misiones
+
             }
         }
     }
@@ -528,7 +544,7 @@ void menuNaves()
         switch (numero)
         {
         case 1://carga de naves
-            cargarNave();
+            crearNave();
             break;
         case 2://muestra listado de naves
             mostrarDatos();
@@ -557,10 +573,49 @@ void menuNaves()
         scanf("%c", &continuar);
     }
 }
-void cargarNave ()///carga naves mientras el usuario desee
+void crearNave()
 {
-    char continuar = 's';
+    char control='s';
+    int id;
     nave aux;
+    while(control=='s')
+    {
+       id=crearIdNave(aux);
+       printf("\nID: %i\n",id);
+       aux=registroN(id);
+       cargarNave(aux);
+
+        printf("\nSi desea cargar otra nave presione 's': ");
+        fflush(stdin);
+        scanf("%c", &control);
+    }
+}
+nave registroN(int id)
+{
+    nave aux;
+    aux.id=id;
+    aux = cargarTipo(aux);
+    aux = cantidadVuelos(aux);
+    aux = horasVuelo(aux);
+    aux = Estado(aux);
+    return aux;
+}
+int crearIdNave(nave a)
+{
+    FILE*arch=fopen(archNaves,"r+b");
+    int id=0;
+    if(arch!=NULL)
+    {
+        fseek(arch,sizeof(nave)*(-1),SEEK_END);
+        fread(&a,sizeof(nave),1,arch);
+        id=a.id;
+        id++;
+        fclose(arch);
+    }
+    return id;
+}
+void cargarNave (nave aux)///carga naves mientras el usuario desee
+{
     FILE*arch=fopen(archNaves,"rb");//Se abre el archivo en "rb" para comprobar la existencia del archivo
 
     if(arch==NULL)//el archivo no tiene datos
@@ -577,48 +632,11 @@ void cargarNave ()///carga naves mientras el usuario desee
 
     if (arch != NULL)//se pudo abrir el archNaves en esritura
     {
-        while (continuar == 's')
-        {
-            aux = cargarId(aux);
-            aux = cargarTipo(aux);
-            aux = cantidadVuelos(aux);
-            aux = horasVuelo(aux);
-            aux = Estado(aux);
             fwrite(&aux, sizeof(nave), 1, arch);//escritura en el archivo
-
-            printf("\n\t---Si desea cargar otra nave ingrese 's'---");
-            fflush(stdin);
-            scanf("%c", &continuar);
-        }
+            fclose(arch);
     }
     else//no se pudo abrir el archivo
         printf("\n\t\t---Hubo un ERROR al abrir el archivo---\n");
-}
-nave cargarId (nave A)///carga ID
-{
-    int id;
-    FILE * arch = fopen(archNaves, "rb");//modo lectura
-
-    if (arch != NULL)//se pudo abrir el archivo
-    {
-        printf("\nIngrese el ID: ");
-        scanf("%i", &id);
-
-        while (fread(&A, sizeof (nave), 1, arch)> 0)//se lee el archivo
-        {
-            if (id == A.id)
-            {
-                printf("\nID NO VALIDO");
-                printf("\nIngrese el ID");
-                scanf("%i", &id);
-            }
-        }
-        A.id = id;
-        fclose(arch);
-    }
-    else
-        printf("\n\t\t---Hubo un ERROR al abrir el archNaves---\n");
-    return A;
 }
 nave cargarTipo (nave B)///carga el TIPO DE NAVE
 {
@@ -870,16 +888,22 @@ void menuMisiones()
         switch(opcion)
         {
         case 1://cargar misiones nuevas
-            nuevaMision();
+            crearMision();
             break;
         case 2://mostrar todas las misiones
             mostrarMisiones();
             break;
-        case 3:
+        case 3://poner estado de mision en 'lista'
+            darAltaMision();
             break;
-        case 4:
+        case 4://poner en 'cancelada' el estado de la mision
+            darBajaMision();
             break;
-        case 5:
+        case 5://modificar el estado de la mision
+            modificacionMision();
+            break;
+        case 6://consultar los datos de una mision
+            consultasMision();
             break;
         default:
             printf("\n\t---El valor que ingreso no se encuentra entre las opciones disponibles-- ");
@@ -889,10 +913,55 @@ void menuMisiones()
         scanf("%c",&control);
     }
 }
-void nuevaMision()
+void crearMision()
 {
     char control='s';
+    int id;
     misiones aux;
+    while(control=='s')
+    {
+       id=crearIdMisiones(aux);
+       printf("\nID: %i\n",id);
+       aux=registroMisiones(id);
+       nuevaMision(aux);
+
+        printf("\nSi desea cargar otra mision presione 's': ");
+        fflush(stdin);
+        scanf("%c", &control);
+    }
+}
+misiones registroMisiones(int id)
+{
+    misiones aux;
+    aux.id=id;
+            aux=asignarNave(aux);
+            aux=cargarEstadoMision(aux);
+            aux=cargarDestinoyCargamento(aux);
+            //aux=asignarAstronauta(aux, &idAstro);
+            //cargarMisiones(id,idAstro);
+            printf("\nDetalles de la mision: ");
+            fflush(stdin);
+            gets(aux.detalleMision);
+
+    return aux;
+}
+int crearIdMisiones(misiones a)
+{
+    FILE*arch=fopen(archNaves,"r+b");
+    int id=0;
+    if(arch!=NULL)
+    {
+        fseek(arch,sizeof(nave)*(-1),SEEK_END);
+        fread(&a,sizeof(nave),1,arch);
+        id=a.id;
+        id++;
+        fclose(arch);
+    }
+    return id;
+}
+
+void nuevaMision(misiones aux)
+{
     FILE*arch=fopen(archMisiones,"rb");
     if(arch==NULL)
     {
@@ -907,73 +976,54 @@ void nuevaMision()
     }
     if(arch!=NULL)
     {
-        while(control=='s')
-        {
-            aux=cargarIdMision(aux);
-            aux=asignarNave(aux);
-            aux=cargarEstadoMision(aux);
-            aux=cargarDestinoyCargamento(aux);
-            aux=asignarAstronauta(aux);
-            printf("\nDetalles de la mision: ");
-            fflush(stdin);
-            gets(aux.detalleMision);
-
             fwrite(&aux,sizeof(misiones),1,arch);
-            printf("\n\t---Si desea cargar otra mision ingrese 's'---");
-            fflush(stdin);
-            scanf("%c", &control);
-        }
+
         fclose(arch);
     }
     else
         printf("\n\t\t---Hubo un ERROR al abrir el archNaves---\n");
 }
-misiones cargarIdMision(misiones aux)
-{
-    FILE*arch=fopen(archMisiones,"rb");
-    int id;
-    if(arch!=NULL)
-    {
-        printf("\nIngrese el ID:");
-        scanf("%i", &id);
-        while(fread(&aux,sizeof(misiones),1,arch)>0)
-        {
-            if(id==aux.id)
-            {
-                printf("\nID NO VALIDO");
-                printf("\nIngrese el ID:");
-                scanf("%i", &id);
-            }
-        }
-        aux.id=id;
-        fclose(arch);
-    }
-    return aux;
-}
 misiones asignarNave(misiones aux)
 {
     FILE*arch=fopen(archNaves,"rb");
-    int id;
+    int id, flag=0;
     if(arch!=NULL)
     {
         nave a;
         printf("Las naves disponibles que puede asignar son: ");
         while(fread(&a, sizeof(nave), 1, arch)>0)
         {
-            printf("...");
             if(a.estado==1)
             {
                printf("\n-------------------");
                printf("\nId nave: %i",a.id);
                printf("\nTipo nave: %s",a.nave);
                printf("\n-------------------");
+               flag=1;
             }
         }
-        fclose(arch);
-        printf("\nIngrese el ID de la nave que asignara: ");
+        if(flag==1)
+        {
+            printf("\nIngrese el ID de la nave que asignara: ");
         scanf("%i", &aux.idNave);
+        }
+        else
+            printf("\nNo hay naves disponibles para la mision  ");
+        while(fread(&a, sizeof(nave), 1, arch)>0)
+        {
+            if(a.estado==1)
+            {
+                if(aux.idNave!=a.id)
+                {
+                    printf("\nID NO VALIDO");
+                    printf("\nIngrese el ID de la nave que asignara: ");
+                    scanf("%i", &aux.idNave);
+                }
+            }
+        }
         id=aux.idNave;
         enMision(id);
+        fclose(arch);
     }
     else
         printf("\nNo hay naves disponibles para asignar");
@@ -1001,10 +1051,10 @@ misiones cargarDestinoyCargamento(misiones aux)
     gets(aux.cargamento);
     return aux;
 }
-misiones asignarAstronauta(misiones aux)
+misiones asignarAstronauta(misiones aux/*, int*id*/)
 {
     FILE*arch=fopen(archAstronauta,"rb");
-    int id;
+    int  flag=0,id;
     if(arch!=NULL)
     {
         stAstronauta a;
@@ -1017,13 +1067,32 @@ misiones asignarAstronauta(misiones aux)
                 printf("\nNobre y apellido: %s %s",a.nombre,a.apellido);
                 printf("\nId: %i",a.id);
                 printf("\n------------------");
+                flag=1;
             }
         }
-        fclose(arch);
-        printf("\nIngrese el ID del astronauta que asignara: ");
+        if(flag==1)
+        {
+            printf("\nIngrese el ID del astronauta que asignara: ");
         scanf("%i", &aux.idAstronauta);
+        }
+        else
+            printf("\nNo hay astronautas disponibles para la mision");
+
+        while(fread(&a,sizeof(stAstronauta),1,arch)>0)
+        {
+            if(a.estado==1)
+            {
+                if(aux.idAstronauta!=a.id)
+                {
+                    printf("\nID NO VALIDO");
+                    printf("\nIngrese el ID del astronauta que asignara: ");
+                    scanf("%i", &aux.idAstronauta);
+                }
+            }
+        }
         id=aux.idAstronauta;
         darBaja(id);
+        fclose(arch);
     }
     else
         printf("\nNo hay astronautas disponibles para asignar");
@@ -1065,4 +1134,152 @@ void mostrarUnaMision(misiones aux)
         printf("Fallida\n");
     printf("DETALLE DE MISION: %s",aux.detalleMision);
     printf("\n------------------------");
+}
+void consultasMision()
+{
+    int id, flag = 0;
+    misiones aux;
+
+    FILE * arch = fopen(archMisiones, "rb");//modo lectura
+    if (arch != NULL)//se pudo abrir el archivo
+    {
+        printf("\nIngrese el ID de la mision que quiere consultar: ");//id de busqueda
+        scanf("%i", &id);
+
+        while (flag == 0 && fread (&aux, sizeof(misiones), 1, arch) > 0)//lee el archivo si encuentra el id el while se corta
+        {
+            if (id == aux.id)
+            {
+                mostrarUnaMision(aux);//funcion de mostrar
+                flag = 1;
+            }
+        }
+        fclose(arch);
+    }
+    else//no se pudo abrir el archivo
+        printf("\n\t\t---Hubo un ERROR al abrir el archivo---");
+}
+void darAltaMision() ///pone una mision en "lista"
+{
+    int flag = 0, id;
+    FILE * arch = fopen(archMisiones, "r+b");//modo lectura y escritura
+    misiones aux;
+    if (arch != NULL)//se pudo abrir el archivo
+    {
+        printf("\nIngrese el ID de la mision que quiere dar de alta: ");//id de busqueda
+        scanf("%i", &id);
+        while (flag == 0 && fread (&aux, sizeof(misiones), 1, arch) > 0)//lee el archivo, si encuentra el id el whise se corta
+        {
+            if (id == aux.id)
+            {
+                if (aux.estado == 2 || aux.estado == 3 || aux.estado == 4)//solo se da de alta si la nave esta en estado "mantenimiento" y "de baja"
+                {
+                    printf("\nLa mision se pondra en estado 'lista': %i",aux.id);
+                    aux.estado = 0;//cambio de estado a "lista para su uso"
+                    fseek(arch, sizeof(misiones)*-1, SEEK_CUR);
+                    fwrite(&aux, sizeof(misiones), 1, arch);// escritura en el archivo
+                    flag = 1;
+                }
+                else
+                {
+                    printf("\nSu mision no puede darse de alta");
+                    flag=1;
+                }
+            }
+        }
+        fclose(arch);
+    }
+    else//no se pudo abrir el archivo
+        printf("\n\t\t---Hubo un ERROR al abrir el archivo---");
+}
+void darBajaMision ()///pone una mision en "cancelada"
+{
+    int flag = 0,id;
+    FILE * arch = fopen(archMisiones, "r+b");//modo lectura y escritura
+    misiones aux;
+    if (arch != NULL)//se pudo abrir el archivo
+    {
+        printf("\nIngrese el ID de la mision que quiere dar de baja: ");//id de busqueda
+        scanf("%i", &id);
+        while (flag == 0 && fread (&aux, sizeof(misiones), 1, arch) > 0)//lee el archivo si encuentra el id el while se corta
+        {
+            if (id == aux.id)
+            {
+                if (aux.estado == 0)//solo en los estados 0 y 1 se puede dar de baja
+                {
+                    printf("\nLa mision se pondra en estado 'cancelada': %i",aux.id);
+                    aux.estado = 3;//cambio de estado a "de baja"
+                    fseek(arch, sizeof(misiones)*-1, SEEK_CUR);
+                    fwrite(&aux, sizeof(misiones), 1, arch);//escritura en el archivo
+                    flag = 1;
+                }
+                else
+                {
+                    printf("\nSu mision no puede darse da baja");
+                    flag=1;
+                }
+            }
+        }
+        fclose(arch);
+    }
+    else//no se pudo abrir el archivo
+        printf("\n\t\t---Hubo un ERROR al abrir el archivo---");
+}
+void modificacionMision()///modifica el estado de la mision
+{
+    int id, num,num2, flag = 0;
+    misiones aux;
+
+    FILE * arch = fopen(archMisiones, "r+b");//modo lectura y escritura
+    if (arch != NULL)//se pudo abrir el archivo
+    {
+        printf("\nIngrese el ID de la mision: ");//id de busqueda
+        scanf("%i", &id);
+        while (flag == 0 && fread (&aux, sizeof(misiones), 1, arch) > 0)//lee el archivo y si encuentra el id el while se corta
+        {
+            if (id == aux.id)
+            {
+                if(aux.estado==0)
+                {
+                    printf("\nSu mision esta en estado 'LISTA'");
+                    printf("\nDesea cambiar su estado a 'EN VUELO'? ingrese 1");
+                    scanf("%i", &num);
+                    if(num==1)
+                    {
+                        aux.estado=1;
+                        fseek(arch, sizeof(misiones)*-1, SEEK_CUR);
+                        fwrite(&aux, sizeof(misiones), 1, arch);//escritura en el archivo
+                        flag = 1;
+                    }
+                    else
+                        printf("\nNo se cambiara el estado de la mision");
+                }
+                else if (aux.estado==1)
+                {
+                    printf("\nSu mision esta en estado 'EN VUELO'");
+                    printf("\nDesea cambiar a 'RETORNADA' |1| o 'FALLIDA' |2|");
+                    scanf("%i", &num2);
+                    if(num2==1)
+                    {
+                        aux.estado=2;
+                        fseek(arch, sizeof(misiones)*-1, SEEK_CUR);
+                        fwrite(&aux, sizeof(misiones), 1, arch);//escritura en el archivo
+                        flag = 1;
+                    }
+                    else if (num2==2)
+                    {
+                        aux.estado=4;
+                        fseek(arch, sizeof(misiones)*-1, SEEK_CUR);
+                        fwrite(&aux, sizeof(misiones), 1, arch);//escritura en el archivo
+                        flag = 1;
+                    }
+                    else
+                       printf("\nNo se cambiara el estado de la mision");
+                }
+            }
+        }
+        fclose(arch);
+    }
+    else//no se pudo abrir el archNaves
+        printf("\n\t\t---Hubo un ERROR al abrir el archNaves---");
 }
