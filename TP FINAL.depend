@@ -22,14 +22,14 @@
 	<string.h>
 	"LibreriaNaves.h"
 
-1623772920 source:c:\users\lenovo\onedrive\escritorio\tp-final-main\libreriaastronauta.c
+1624220008 source:c:\users\lenovo\onedrive\escritorio\tp-final-main\libreriaastronauta.c
 	<stdio.h>
-	<string.h>
 	<stdlib.h>
+	<string.h>
 	"libreriaAstronauta.h"
-	"libreriaMisiones.h"
 
-1623928788 c:\users\lenovo\onedrive\escritorio\tp-final-main\libreriaastronauta.h
+1624220008 c:\users\lenovo\onedrive\escritorio\tp-final-main\libreriaastronauta.h
+	<stdio.h>
 
 1623928723 c:\users\lenovo\onedrive\escritorio\tp-final-main\libreriamisiones.h
 
@@ -46,7 +46,7 @@
 	<string.h>
 	"LibreriaNaves.h"
 
-1624050922 source:c:\users\lenovo\onedrive\escritorio\tp-final-main\main.c
+1624222961 source:c:\users\lenovo\onedrive\escritorio\tp-final-main\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
